@@ -31,3 +31,18 @@ jobs:
         env:
           TF_VAR_password_mysql: ${{ secrets.DB_PASSWORD }}
         run: terraform destroy -auto-approve
+      - name: Send deployment to Swarmia
+        if: success()
+        run: |
+          JSON_STRING=$( jq --null-input --compact-output \
+            --arg version "${{ github.sha }}" \
+            --arg appName "teste" \
+            --arg environment "production" \
+            --arg commitSha "${{ github.sha }}" \
+            --arg repositoryFullName "${{ github.repository }}" \
+            '{"version": $version, "appName": $appName, "environment": $environment, "commitSha": $commitSha, "repositoryFullName": $repositoryFullName}' )
+
+          curl -H "Authorization: ${{ secrets.SWARMIA_DEPLOYMENTS_AUTHORIZATION }}" \
+            -H "Content-Type: application/json" \
+            -d "$JSON_STRING" \
+            https://hook.swarmia.com/deployments        

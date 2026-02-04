@@ -5,7 +5,7 @@
 vpc_cidr_block = "10.123.0.0/16"
 
 tags_vpc = {
-  Name        = "VPC Rodrigo - Desafio EZOps"
+  Name        = "VPC Rodrigo - Desafio EZOps 2"
   Owner       = "Rodrigo Gomes"
   Project     = "Desafios EZOps"
   Environment = "Test"

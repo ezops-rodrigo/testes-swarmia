@@ -1,0 +1,39 @@
+name: Deploy Mobile
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [main]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  deploy:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Send deployment to Swarmia
+        run: |
+          JSON_STRING=$( jq --null-input --compact-output \
+            --arg version "${{ github.sha }}" \
+            --arg appName "perkypet-mobile" \
+            --arg environment "$ENVIRONMENT" \
+            --arg commitSha "${{ github.sha }}" \
+            --arg repositoryFullName "${{ github.repository }}" \
+            '{"version": $version, "appName": $appName, "environment": $environment, "commitSha": $commitSha, "repositoryFullName": $repositoryFullName}' )
+
+          if ! curl --fail --max-time 30 \
+            -H "Authorization: ${{ secrets.SWARMIA_DEPLOYMENTS_AUTHORIZATION }}" \
+            -H "Content-Type: application/json" \
+            -d "$JSON_STRING" \
+            https://hook.swarmia.com/deployments; then
+            echo "Warning: Failed to send deployment notification to Swarmia"
+            exit 0
+          fi

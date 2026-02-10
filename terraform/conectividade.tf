@@ -78,6 +78,9 @@ resource "aws_route_table" "private" {
   })
 }
 
+
+
+
 # Criar rota para a route table privada apontando para o NAT Gateway
 resource "aws_route" "private_nat" {
   route_table_id         = aws_route_table.private.id

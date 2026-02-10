@@ -6,6 +6,7 @@ module "vpc_app" {
   tags           = var.tags_vpc
 }
 
+
 ### Criaçao do Internet Gateway ###
 
 module "internet_gateway" {

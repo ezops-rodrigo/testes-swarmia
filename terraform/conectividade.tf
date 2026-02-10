@@ -7,6 +7,7 @@ module "vpc_app" {
 }
 
 
+
 ### Criaçao do Internet Gateway ###
 
 module "internet_gateway" {
